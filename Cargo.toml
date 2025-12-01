@@ -1,0 +1,26 @@
+[package]
+name = "aoc2025"
+version = "0.1.0"
+edition = "2024"
+
+# [workspace]
+# members = ["crates/*"]
+
+[workspace.dependencies]
+regex = "1.11.1"
+
+[dependencies]
+regex = { workspace = true }
+anyhow = "1.0.100"
+
+[[bin]]
+name = "01"
+path = "days/01.rs"
+
+[[bin]]
+name = "02"
+path = "days/02.rs"
+
+[[bin]]
+name = "03"
+path = "days/03.rs"
