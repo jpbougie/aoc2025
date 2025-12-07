@@ -1,8 +1,23 @@
-use std::fmt::{Debug, Display};
+use std::{
+    error::Error,
+    fmt::{Debug, Display},
+    str::FromStr,
+};
 
 pub struct Grid<T> {
     grid: Vec<Vec<T>>,
 }
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ParseGridError;
+
+impl Display for ParseGridError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "ParseGridError")
+    }
+}
+
+impl Error for ParseGridError {}
 
 impl<T> Grid<T> {
     pub fn new() -> Self {
@@ -102,6 +117,26 @@ impl<T> Grid<T> {
         let mut result = self.straight_neighbours(row, col);
         result.append(&mut self.diagonal_neighbours(row, col));
         result
+    }
+}
+
+impl<T> FromStr for Grid<T>
+where
+    T: TryFrom<char>,
+{
+    type Err = ParseGridError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let mut grid = Self::new();
+        for line in s.lines() {
+            grid.add_row(
+                line.chars()
+                    .map(|ch| ch.try_into().map_err(|_| ParseGridError))
+                    .collect::<Result<Vec<T>, ParseGridError>>()?,
+            );
+        }
+
+        Ok(grid)
     }
 }
 
